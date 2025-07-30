@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>تأیید ایمیل | Firebase Email Verify</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style> /* ... استایل‌ها مشابه قبل ... */ </style>
+</head>
+<body>
+  <div class="container">
+    <h2>تأیید ایمیل</h2>
+    <div id="message" class="message">در حال بررسی...</div>
+    <a href="signup.html" class="home-link">بازگشت به ثبت‌نام</a>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, applyActionCode } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDLxrt73ZoP7pL9wJr6aQFZZpLi0eX9tUc",
+      authDomain: "bm1-ir-ru.firebaseapp.com",
+      projectId: "bm1-ir-ru",
+      storageBucket: "bm1-ir-ru.firebasestorage.app",
+      messagingSenderId: "248615165940",
+      appId: "1:248615165940:web:2273808036062e0e1fa3a1",
+      measurementId: "G-4HG7BG6WST"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const message = document.getElementById('message');
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
+    const oobCode = urlParams.get('oobCode');
+
+    async function verifyEmail() {
+      if (mode !== 'verifyEmail' || !oobCode) {
+        message.textContent = "پارامترهای معتبر تأیید ایمیل یافت نشد.";
+        message.className = "message error";
+        return;
+      }
+      try {
+        await applyActionCode(auth, oobCode);
+        message.textContent = "ایمیل شما با موفقیت تأیید شد. ممنون!";
+        message.className = "message success";
+      } catch (error) {
+        message.textContent = "خطا در تأیید ایمیل: " + error.message;
+        message.className = "message error";
+      }
+    }
+
+    verifyEmail();
+  </script>
+</body>
+</html>
