@@ -4,20 +4,110 @@
   <meta charset="UTF-8" />
   <title>ثبت‌نام | Firebase Email Verify</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style> /* ... استایل‌ها مشابه قبل ... */ </style>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css');
+    body {
+      font-family: 'Vazir', sans-serif;
+      background: linear-gradient(135deg, #232526, #1c1c1c);
+      color: #eee;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      padding: 10px;
+    }
+    .container {
+      background: #2d3138;
+      padding: 30px 35px;
+      border-radius: 12px;
+      width: 360px;
+      box-shadow: 0 0 25px rgba(0, 173, 181, 0.6);
+      text-align: center;
+    }
+    h2 {
+      color: #00adb5;
+      margin-bottom: 25px;
+      font-weight: 700;
+      font-size: 1.8rem;
+      letter-spacing: 1.5px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      text-align: right;
+      font-size: 1rem;
+    }
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      margin-bottom: 18px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      background-color: #1c1f26;
+      color: #eee;
+      box-shadow: inset 0 0 5px #000;
+      transition: box-shadow 0.3s ease;
+    }
+    input:focus {
+      outline: none;
+      box-shadow: inset 0 0 8px #00adb5;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #00adb5;
+      border: none;
+      border-radius: 8px;
+      color: #1c1f26;
+      font-weight: 700;
+      font-size: 1.15rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      letter-spacing: 1px;
+    }
+    button:hover {
+      background: #028a92;
+    }
+    .message {
+      margin-top: 20px;
+      padding: 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      display: none;
+      user-select: none;
+    }
+    .success {
+      background-color: #22c55e;
+      color: #e7f5e1;
+      box-shadow: 0 0 10px #22c55e;
+    }
+    .error {
+      background-color: #ef4444;
+      color: #fef2f2;
+      box-shadow: 0 0 10px #ef4444;
+    }
+  </style>
 </head>
 <body>
+
   <div class="container">
     <h2>ثبت‌نام</h2>
-    <form id="signup-form">
+    <form id="signup-form" autocomplete="off" novalidate>
       <label for="email">ایمیل</label>
       <input type="email" id="email" placeholder="example@example.com" required />
+      
       <label for="password">رمز عبور (حداقل ۸ کاراکتر)</label>
-      <input type="password" id="password" minlength="8" required />
+      <input type="password" id="password" minlength="8" placeholder="********" required />
+      
       <button type="submit">ثبت‌نام و ارسال ایمیل تأیید</button>
     </form>
     <div id="message" class="message"></div>
   </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -44,25 +134,39 @@
       message.style.display = 'block';
     }
 
-    form.addEventListener('submit', async e => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       message.style.display = 'none';
 
       const email = form.email.value.trim();
       const password = form.password.value;
 
+      if (!email || !password) {
+        showMessage("لطفاً همه فیلدها را پر کنید.", "error");
+        return;
+      }
+
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         await sendEmailVerification(user, { url: "https://madsmart13.github.io/verify.html" });
         await signOut(auth);
-
         showMessage("ثبت‌نام موفق! ایمیل تأیید ارسال شد. لطفاً ایمیل خود را چک کنید.", "success");
         form.reset();
       } catch (error) {
-        showMessage(error.message || "خطا در ثبت‌نام.", "error");
+        // مدیریت خطاها
+        if (error.code === 'auth/email-already-in-use') {
+          showMessage("این ایمیل قبلاً ثبت شده است. لطفاً وارد شوید یا از ایمیل دیگری استفاده کنید.", "error");
+        } else if (error.code === 'auth/invalid-email') {
+          showMessage("ایمیل وارد شده معتبر نیست.", "error");
+        } else if (error.code === 'auth/weak-password') {
+          showMessage("رمز عبور ضعیف است. حداقل 8 کاراکتر باشد.", "error");
+        } else {
+          showMessage(error.message || "خطایی رخ داده است.", "error");
+        }
       }
     });
   </script>
+
 </body>
 </html>
