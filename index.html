@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>تأیید ایمیل | Firebase Email Verify</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: 'Vazirmatn', sans-serif;
+      background: #222831;
+      color: #eee;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    .container {
+      background: #393e46;
+      padding: 30px;
+      border-radius: 10px;
+      width: 350px;
+      box-shadow: 0 0 15px #00adb5;
+    }
+    h2 {
+      margin-bottom: 15px;
+      color: #00adb5;
+    }
+    .message {
+      font-weight: 600;
+      font-size: 1.1rem;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    .success {
+      background: #22c55e;
+      color: #e7f5e1;
+    }
+    .error {
+      background: #ef4444;
+      color: #fef2f2;
+    }
+    a.home-link {
+      margin-top: 20px;
+      display: inline-block;
+      text-decoration: none;
+      color: #00adb5;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>تأیید ایمیل</h2>
+    <div id="message" class="message">در حال بررسی...</div>
+    <a href="/signup.html" class="home-link">بازگشت به ثبت‌نام</a>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, applyActionCode } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDLxrt73ZoP7pL9wJr6aQFZZpLi0eX9tUc",
+      authDomain: "bm1-ir-ru.firebaseapp.com",
+      projectId: "bm1-ir-ru",
+      storageBucket: "bm1-ir-ru.firebasestorage.app",
+      messagingSenderId: "248615165940",
+      appId: "1:248615165940:web:2273808036062e0e1fa3a1",
+      measurementId: "G-4HG7BG6WST"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const message = document.getElementById('message');
+
+    // پارامترهای URL را می‌خوانیم
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
+    const oobCode = urlParams.get('oobCode');
+
+    async function verifyEmail() {
+      if (mode !== 'verifyEmail' || !oobCode) {
+        message.textContent = "پارامترهای معتبر تأیید ایمیل یافت نشد.";
+        message.className = "message error";
+        return;
+      }
+      try {
+        await applyActionCode(auth, oobCode);
+        message.textContent = "ایمیل شما با موفقیت تأیید شد. ممنون!";
+        message.className = "message success";
+      } catch (error) {
+        message.textContent = "خطا در تأیید ایمیل: " + error.message;
+        message.className = "message error";
+      }
+    }
+
+    verifyEmail();
+  </script>
+</body>
+</html>
