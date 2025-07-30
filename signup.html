@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>ثبت‌نام | Firebase Email Verify</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: 'Vazirmatn', sans-serif;
+      background: #222831;
+      color: #eee;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: #393e46;
+      padding: 30px;
+      border-radius: 10px;
+      width: 350px;
+      box-shadow: 0 0 15px #00adb5;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #00adb5;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #00adb5;
+      border: none;
+      color: #222831;
+      font-weight: bold;
+      font-size: 1.1rem;
+      border-radius: 7px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #028a92;
+    }
+    .message {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 8px;
+      display: none;
+      font-weight: 600;
+      text-align: center;
+    }
+    .success {
+      background: #22c55e;
+      color: #e7f5e1;
+    }
+    .error {
+      background: #ef4444;
+      color: #fef2f2;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>ثبت‌نام</h2>
+    <form id="signup-form">
+      <label for="email">ایمیل</label>
+      <input type="email" id="email" placeholder="example@example.com" required />
+      <label for="password">رمز عبور (حداقل ۸ کاراکتر)</label>
+      <input type="password" id="password" minlength="8" required />
+      <button type="submit">ثبت‌نام و ارسال ایمیل تأیید</button>
+    </form>
+    <div id="message" class="message"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDLxrt73ZoP7pL9wJr6aQFZZpLi0eX9tUc",
+      authDomain: "bm1-ir-ru.firebaseapp.com",
+      projectId: "bm1-ir-ru",
+      storageBucket: "bm1-ir-ru.firebasestorage.app",
+      messagingSenderId: "248615165940",
+      appId: "1:248615165940:web:2273808036062e0e1fa3a1",
+      measurementId: "G-4HG7BG6WST"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const form = document.getElementById('signup-form');
+    const message = document.getElementById('message');
+
+    function showMessage(text, type) {
+      message.textContent = text;
+      message.className = 'message ' + type;
+      message.style.display = 'block';
+    }
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      message.style.display = 'none';
+
+      const email = form.email.value.trim();
+      const password = form.password.value;
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        await sendEmailVerification(user, { url: "https://madsmart13.github.io/verify/" });
+        await signOut(auth);
+
+        showMessage("ثبت‌نام موفق! ایمیل تأیید ارسال شد. لطفاً ایمیل خود را چک کنید.", "success");
+        form.reset();
+      } catch (error) {
+        showMessage(error.message || "خطا در ثبت‌نام.", "error");
+      }
+    });
+  </script>
+</body>
+</html>
