@@ -1,83 +1,194 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa">
 <head>
   <meta charset="UTF-8" />
-  <title>ثبت‌نام | Firebase Email Verify</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style> /* ... استایل‌ها مشابه قبل ... */ </style>
-</head>
-<body>
-  <div class="container">
-    <h2> BM1 server ثبت‌نام</h2>
-    <form id="signup-form">
-      <label for="email">ایمیل</label>
-      <input type="email" id="email" placeholder="example@example.com" required />
-      <label for="password">رمز عبور (حداقل ۸ کاراکتر)</label>
-      <input type="password" id="password" minlength="8" required />
-      <button type="submit">ثبت‌نام و ارسال ایمیل تأیید</button>
-    </form>
-    <div id="message" class="message"></div>
-  </div>
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDLxrt73ZoP7pL9wJr6aQFZZpLi0eX9tUc",
-      authDomain: "bm1-ir-ru.firebaseapp.com",
-      projectId: "bm1-ir-ru",
-      storageBucket: "bm1-ir-ru.firebasestorage.app",
-      messagingSenderId: "248615165940",
-      appId: "1:248615165940:web:2273808036062e0e1fa3a1",
-      measurementId: "G-4HG7BG6WST"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    const form = document.getElementById('signup-form');
-    const message = document.getElementById('message');
-
-    function showMessage(text, type) {
-      message.textContent = text;
-      message.className = 'message ' + type;
-      message.style.display = 'block';
+  <title>ورود به سرور RGB</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Tahoma, sans-serif;
+      background: linear-gradient(270deg, #0f0c29, #302b63, #24243e);
+      background-size: 600% 600%;
+      animation: backgroundRGB 10s ease infinite;
+      color: white;
+      overflow: hidden;
     }
 
-    form.addEventListener('submit', async e => {
-      e.preventDefault();
-      message.style.display = 'none';
+    @keyframes backgroundRGB {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-      const email = form.email.value.trim();
-      const password = form.password.value;
+    #loader {
+      position: fixed;
+      width: 100%;
+      height: 100vh;
+      background-color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 9999;
+    }
 
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        await sendEmailVerification(user, { url: "https://madsmart13.github.io/verify.html" });
-        await signOut(auth);
+    .neon-loader {
+      width: 80px;
+      height: 80px;
+      border: 8px solid;
+      border-color: #00f7ff transparent #ff00c8 transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
 
-        showMessage("ثبت‌نام موفق! ایمیل تأیید ارسال شد. لطفاً ایمیل خود را چک کنید.", "success");
-        form.reset();
-      } catch (error) {
-        showMessage(error.message || "خطا در ثبت‌نام.", "error");
-      }
-        </script>
+    .loader-text {
+      color: #0ff;
+      font-size: 20px;
+      margin-top: 20px;
+      animation: glow 1s ease-in-out infinite alternate;
+    }
 
-  <!-- پشتیبانی آنلاین -->
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #0ff; }
+      to { text-shadow: 0 0 20px #0ff, 0 0 30px #0ff; }
+    }
+
+    .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .popup-content {
+      background: #111;
+      padding: 40px;
+      border-radius: 20px;
+      border: 2px solid cyan;
+      text-align: center;
+      box-shadow: 0 0 20px #0ff, 0 0 40px #f90, 0 0 60px #ff0;
+      animation: glowbox 2s infinite alternate;
+      position: relative;
+    }
+
+    @keyframes glowbox {
+      from { box-shadow: 0 0 10px #0ff, 0 0 20px #f90; }
+      to { box-shadow: 0 0 20px #0ff, 0 0 40px #f90, 0 0 60px #ff0; }
+    }
+
+    .popup h2, .popup p { margin: 10px 0; }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 30px;
+      color: white;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      text-shadow: 0 0 5px #ff3, 0 0 10px #f90, 0 0 20px #f90, 0 0 30px #ff3;
+      transition: all 0.3s ease;
+      animation: neonPulse 2s infinite alternate;
+    }
+    .close-btn:hover {
+      color: #ffcc00;
+      text-shadow: 0 0 10px #ff3, 0 0 20px #ff9900, 0 0 40px #ffcc00, 0 0 60px #ffaa00;
+      transform: scale(1.2);
+    }
+
+    .connect-btn {
+      display: none;
+      margin: 30px auto;
+      padding: 15px 40px;
+      font-size: 20px;
+      background: limegreen;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 0 10px #0f0, 0 0 20px #0f0, 0 0 30px #0f0, 0 0 40px #0f0;
+      transition: all 0.3s ease;
+      animation: neonPulseGreen 2s infinite alternate;
+    }
+    .connect-btn:hover {
+      background: #00cc00;
+      box-shadow: 0 0 20px #0f0, 0 0 40px #0f0, 0 0 60px #0f0, 0 0 80px #0f0;
+      transform: scale(1.1);
+    }
+
+    @keyframes neonPulse {
+      0% { text-shadow: 0 0 5px #ff3, 0 0 10px #f90, 0 0 20px #f90, 0 0 30px #ff3; }
+      100% { text-shadow: 0 0 10px #ffcc00, 0 0 20px #ffcc00, 0 0 40px #ffcc00, 0 0 60px #ffcc00; }
+    }
+
+    @keyframes neonPulseGreen {
+      0% { box-shadow: 0 0 10px #0f0, 0 0 20px #0f0, 0 0 30px #0f0, 0 0 40px #0f0; }
+      100% { box-shadow: 0 0 20px #0f0, 0 0 40px #0f0, 0 0 60px #0f0, 0 0 80px #0f0; }
+    }
+  </style>
+</head>
+<body>
+  <div id="loader">
+    <div class="neon-loader"></div>
+    <div class="loader-text">در حال بارگذاری...</div>
+  </div>
+
+  <div class="popup" id="popup">
+    <div class="popup-content">
+      <button class="close-btn" onclick="closePopup()">&times;</button>
+      <h2>ورود شما تایید شد</h2>
+      <p>اشتراک فعال</p>
+    </div>
+  </div>
+
+  <center>
+    <button id="connectBtn" class="connect-btn" onclick="connectToMinecraft()">اتصال</button>
+  </center>
+
+  <script>
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        document.getElementById("loader").style.display = "none";
+      }, 2000);
+    });
+
+    function closePopup() {
+      document.getElementById("popup").style.display = "none";
+      document.getElementById("connectBtn").style.display = "inline-block";
+    }
+
+    function connectToMinecraft() {
+      const ip = "wii1-rFFa.aternos.me:22481";
+      alert("برای اتصال به سرور Minecraft در TLauncher، این IP را کپی و وارد کنید: \n\n" + ip);
+    }
+  </script>
+
+  <!-- پشتیبانی آنلاین Tawk.to -->
   <script type="text/javascript">
     var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
     (function () {
       var s1 = document.createElement("script"),
-        s0 = document.getElementsByTagName("script")[0];
+          s0 = document.getElementsByTagName("script")[0];
       s1.async = true;
-      s1.src = "https://embed.tawk.to/6888efa4db7610192eeae974/1j1beg73n";
+      s1.src = "https://embed.tawk.to/6888efa4db7610192eeae974/aa1dfe07a2a88b087c6b72d2e50d32aa544b0364";
       s1.charset = "UTF-8";
       s1.setAttribute("crossorigin", "*");
       s0.parentNode.insertBefore(s1, s0);
     })();
-  </script>
-    });
   </script>
 </body>
 </html>
