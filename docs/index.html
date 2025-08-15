@@ -154,7 +154,6 @@
         showMessage("ثبت‌نام موفق! ایمیل تأیید ارسال شد. لطفاً ایمیل خود را چک کنید.", "success");
         form.reset();
       } catch (error) {
-        // مدیریت خطاها
         if (error.code === 'auth/email-already-in-use') {
           showMessage("این ایمیل قبلاً ثبت شده است. لطفاً وارد شوید یا از ایمیل دیگری استفاده کنید.", "error");
         } else if (error.code === 'auth/invalid-email') {
@@ -167,25 +166,37 @@
       }
     });
   </script>
-<p style="
-  position: fixed;
-  bottom: 10px;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  color: #00adb5;
-  font-weight: 600;
-  font-size: 0.95rem;
-  background-color: rgba(34, 40, 49, 0.9);
-  padding: 8px 0;
-  margin: 0;
-  z-index: 1000;
+
+  <p style="
+    position: fixed;
+    bottom: 10px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: #00adb5;
+    font-weight: 600;
+    font-size: 0.95rem;
+    background-color: rgba(34, 40, 49, 0.9);
+    padding: 8px 0;
+    margin: 0;
+    z-index: 1000;
   ">
-  ⚠️ اگر ایمیل دریافت نمی‌کنید، لطفاً پوشه هرزنامه (Spam/Junk) ایمیل خود را بررسی کنید. ایمیلی برای شما ارسال شده است.
-</p>
+    ⚠️ اگر ایمیل دریافت نمی‌کنید، لطفاً پوشه هرزنامه (Spam/Junk) ایمیل خود را بررسی کنید. ایمیلی برای شما ارسال شده است.
+  </p>
 
-
-
+  <!-- پشتیبانی آنلاین Tawk.to -->
+  <script type="text/javascript">
+    var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+    (function () {
+      var s1 = document.createElement("script"),
+          s0 = document.getElementsByTagName("script")[0];
+      s1.async = true;
+      s1.src = "https://embed.tawk.to/6888efa4db7610192eeae974/aa1dfe07a2a88b087c6b72d2e50d32aa544b0364";
+      s1.charset = "UTF-8";
+      s1.setAttribute("crossorigin", "*");
+      s0.parentNode.insertBefore(s1, s0);
+    })();
+  </script>
 
 </body>
 </html>
